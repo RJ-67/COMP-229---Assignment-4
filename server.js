@@ -2,37 +2,26 @@ import dotenv from "dotenv";
 dotenv.config();
 
 import mongoose from "mongoose";
+import config from "./config/config.js";
+import app from "./server/express.js";
 
-// Connect to MongoDB
-mongoose.connect(process.env.MONGO_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-})
-.then(() => console.log("Connected to MongoDB!"))
-.catch((err) => console.error("MongoDB connection error:", err));
+// --- SINGLE CLEAN MONGOOSE CONNECTION ---
+mongoose
+  .connect(config.mongoUri, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
+  .then(() => console.log("✅ Connected to MongoDB"))
+  .catch((err) => {
+    console.error("❌ MongoDB connection error:", err);
+  });
 
-import config from './config/config.js' 
-import app from './server/express.js'
-import mongoose from 'mongoose' 
-mongoose.Promise = global.Promise
-mongoose.connect(config.mongoUri, {
-//useNewUrlParser: true,
-//useCreateIndex: true, 
-//useUnifiedTopology: true
- } )
- .then(() => {
-     console.log("Connected to the database!");
-     })
-    
-mongoose.connection.on('error', () => {
-throw new Error(`unable to connect to database: ${config.mongoUri}`) 
-})
+// --- DEFAULT ROUTE ---
 app.get("/", (req, res) => {
-res.json({ message: "Welcome to My Portfolio application." });
+  res.json({ message: "Welcome to My Portfolio application." });
 });
-app.listen(config.port, (err) => { 
-if (err) {
-console.log(err) 
-}
-console.info('Server started on port %s.', config.port) 
-})
+
+// --- START SERVER ---
+app.listen(config.port, () => {
+  console.log(`🚀 Server running on port ${config.port}`);
+});

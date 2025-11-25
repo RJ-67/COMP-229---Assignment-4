@@ -1,100 +1,80 @@
-import Project from '../models/project.model.js'
-import extend from 'lodash/extend.js'
-import errorHandler from './error.controller.js'
-const create = async (req, res) => { 
-const project = new Project(req.body) 
-try {
-await project.save()
-return res.status(200).json({ 
-message: "Successfully Created!"
-})
-} catch (err) {
-return res.status(400).json({
-error: errorHandler.getErrorMessage(err) 
-})
-} 
-}
-const list = async (req, res) => { 
-try {
-let projects = await Project.find().select('title firstname lastname email completion description') 
-res.json(projects)
-} catch (err) {
-return res.status(400).json({
-error: errorHandler.getErrorMessage(err) 
-})
-} 
-}
-const projectByID = async (req, res, next, id) => { 
-try {
-let project = await Project.findById(id) 
-if (!project)
-return res.status(400).json({ 
-error: "project not found"
-})
-req.project = project 
-next()
-} catch (err) {
-return res.status('400').json({ 
-error: "Could not retrieve project"
-}) 
-}
-}
-const read = (req, res) => {
-//req.profile.hashed_password = undefined 
-//req.profile.salt = undefined
-return res.json(req.project) 
-}
-const update = async (req, res) => { 
-try {
-let project = req.project
-project = extend(project, req.body) 
-project.updated = Date.now() 
-await project.save()
-//project.hashed_password = undefined 
-//project.salt = undefined
-res.json(project) 
-} catch (err) {
-return res.status(400).json({
-error: errorHandler.getErrorMessage(err) 
-})
-} 
-}
-const remove = async (req, res) => { 
-    try {
-    let project = req.project
-    let deletedProject = await project.deleteOne() 
-    //deletedProject = undefined
-    return res.status(200).json({ 
-        message: "Successfully deleted!"
-        });
-      
-    } catch (err) {
-    return res.status(400).json({
-    error: errorHandler.getErrorMessage(err) 
-    })
-    } 
-    }
-    
-// New function to remove multiple contacts
-const removeMany = async (req, res) => {
-    const { ids } = req.body; // Assuming IDs are sent in the request body
-    if (!Array.isArray(ids) || ids.length === 0) {
-        return res.status(400).json({
-            error: "Please provide an array of IDs to delete."
-        });
-    }
-    try {
-        const result = await Project.deleteMany({ _id: { $in: ids } });
-        return res.status(200).json({
-            message: `${result.deletedCount} projects successfully deleted!`
-        });
-    } catch (err) {
-        return res.status(400).json({
-            error: errorHandler.getErrorMessage(err)
-        });
-    }
+import Project from "../models/project.model.js";
+import dbErrorHandler from "../helpers/dbErrorHandler.js";
+
+const create = async (req, res) => {
+  try {
+    const project = new Project({
+      title: req.body.title,
+      role: req.body.role,
+      description: req.body.description,
+      year: req.body.year,
+    });
+
+    let result = await project.save();
+    return res.status(200).json(result);
+  } catch (err) {
+    return res.status(400).json({ error: dbErrorHandler.getErrorMessage(err) });
+  }
 };
 
-export default { create, projectByID, read, list, remove,removeMany, update }
+const list = async (req, res) => {
+  try {
+    let projects = await Project.find().select("title role description year");
+    return res.json(projects);
+  } catch (err) {
+    return res.status(400).json({ error: dbErrorHandler.getErrorMessage(err) });
+  }
+};
 
+const projectByID = async (req, res, next, id) => {
+  try {
+    let project = await Project.findById(id);
+    if (!project) return res.status(400).json({ error: "Project not found" });
+    req.project = project;
+    next();
+  } catch {
+    return res.status(400).json({ error: "Could not retrieve project" });
+  }
+};
 
+const read = (req, res) => {
+  return res.json(req.project);
+};
+
+const update = async (req, res) => {
+  try {
+    let project = req.project;
+
+    if (req.body.title !== undefined) project.title = req.body.title;
+    if (req.body.role !== undefined) project.role = req.body.role;
+    if (req.body.description !== undefined)
+      project.description = req.body.description;
+    if (req.body.year !== undefined) project.year = req.body.year;
+
+    project.updated = Date.now();
+
+    await project.save();
+    return res.json(project);
+  } catch (err) {
+    return res.status(400).json({ error: dbErrorHandler.getErrorMessage(err) });
+  }
+};
+
+const remove = async (req, res) => {
+  try {
+    let project = req.project;
+    let deletedProject = await project.deleteOne();
+    return res.json(deletedProject);
+  } catch (err) {
+    return res.status(400).json({ error: dbErrorHandler.getErrorMessage(err) });
+  }
+};
+
+export default {
+  create,
+  list,
+  read,
+  update,
+  remove,
+  projectByID,
+};
