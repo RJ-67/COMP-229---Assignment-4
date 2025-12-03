@@ -1,14 +1,14 @@
-
+const API_URL = import.meta.env.VITE_API_URL;
 
 const create = async (user) => {
   try {
-    let response = await fetch('/api/users/', {
-      method: 'POST',
+    let response = await fetch(`${API_URL}/api/users/`, {
+      method: "POST",
       headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
+        Accept: "application/json",
+        "Content-Type": "application/json",
       },
-      body: JSON.stringify(user)
+      body: JSON.stringify(user),
     });
     return await response.json();
   } catch (err) {
@@ -18,13 +18,13 @@ const create = async (user) => {
 
 const read = async (params, credentials) => {
   try {
-    let response = await fetch('/api/users/' + params.userId, {
-      method: 'GET',
+    let response = await fetch(`${API_URL}/api/users/${params.userId}`, {
+      method: "GET",
       headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + credentials.t
-      }
+        Accept: "application/json",
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + credentials.t,
+      },
     });
     return await response.json();
   } catch (err) {
@@ -34,13 +34,13 @@ const read = async (params, credentials) => {
 
 const update = async (params, credentials, user) => {
   try {
-    let response = await fetch('/api/users/' + params.userId, {
-      method: 'PUT',
+    let response = await fetch(`${API_URL}/api/users/${params.userId}`, {
+      method: "PUT",
       headers: {
-        'Accept': 'application/json',
-        'Authorization': 'Bearer ' + credentials.t
+        Accept: "application/json",
+        Authorization: "Bearer " + credentials.t,
       },
-      body: user
+      body: user,
     });
     return await response.json();
   } catch (err) {
@@ -54,7 +54,7 @@ const remove = async (params) => {
   try {
     const jwt = auth.isAuthenticated();
 
-    let response = await fetch(`/api/users/${params.userId}`, {
+    let response = await fetch(`${API_URL}/api/users/${params.userId}`, {
       method: "DELETE",
       headers: {
         Accept: "application/json",
@@ -70,7 +70,5 @@ const remove = async (params) => {
     return { error: "Delete failed" };
   }
 };
-
-
 
 export { create, read, update, remove };

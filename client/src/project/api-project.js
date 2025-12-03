@@ -1,6 +1,8 @@
+const API_URL = import.meta.env.VITE_API_URL;
+
 const create = async (project) => {
   try {
-    let response = await fetch("/api/projects", {
+    let response = await fetch(`${API_URL}/api/projects`, {
       method: "POST",
       headers: {
         Accept: "application/json",
@@ -16,7 +18,7 @@ const create = async (project) => {
 
 const list = async (signal) => {
   try {
-    let response = await fetch("/api/projects", { signal });
+    let response = await fetch(`${API_URL}/api/projects`, { signal });
     return await response.json();
   } catch {
     return { error: "Could not reach server" };
@@ -25,7 +27,7 @@ const list = async (signal) => {
 
 const read = async (id, signal) => {
   try {
-    let response = await fetch(`/api/projects/${id}`, { signal });  
+    let response = await fetch(`${API_URL}/api/projects/${id}`, { signal });
     return await response.json();
   } catch {
     return { error: "Could not reach server" };
@@ -34,7 +36,7 @@ const read = async (id, signal) => {
 
 const update = async (id, project) => {
   try {
-    let response = await fetch(`/api/projects/${id}`, {
+    let response = await fetch(`${API_URL}/api/projects/${id}`, {
       method: "PUT",
       headers: {
         Accept: "application/json",
@@ -48,14 +50,13 @@ const update = async (id, project) => {
   }
 };
 
-
 import auth from "../auth/auth-helper";
 
 const remove = async (id) => {
   try {
     const jwt = auth.isAuthenticated();
 
-    let response = await fetch(`/api/projects/${id}`, {
+    let response = await fetch(`${API_URL}/api/projects/${id}`, {
       method: "DELETE",
       headers: {
         Accept: "application/json",
@@ -71,7 +72,5 @@ const remove = async (id) => {
     return { error: "Delete failed" };
   }
 };
-
-
 
 export { create, list, read, update, remove };

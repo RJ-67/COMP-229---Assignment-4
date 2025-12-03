@@ -1,7 +1,9 @@
+const API_URL = import.meta.env.VITE_API_URL;
+
 // CREATE CONTACT
 const create = async (contact) => {
   try {
-    let response = await fetch("/api/contacts", {
+    let response = await fetch(`${API_URL}/api/contacts`, {
       method: "POST",
       headers: {
         Accept: "application/json",
@@ -18,7 +20,7 @@ const create = async (contact) => {
 // GET ALL CONTACTS
 const list = async () => {
   try {
-    let response = await fetch("/api/contacts", {
+    let response = await fetch(`${API_URL}/api/contacts`, {
       method: "GET",
     });
     return await response.json();
@@ -28,14 +30,14 @@ const list = async () => {
   }
 };
 
-// DELETE CONTACT
 import auth from "../auth/auth-helper";
 
+// DELETE CONTACT
 const remove = async (id) => {
   try {
     const jwt = auth.isAuthenticated();
 
-    let response = await fetch(`/api/contacts/${id}`, {
+    let response = await fetch(`${API_URL}/api/contacts/${id}`, {
       method: "DELETE",
       headers: {
         Accept: "application/json",
@@ -51,6 +53,5 @@ const remove = async (id) => {
     return { error: "Delete failed" };
   }
 };
-
 
 export { create, list, remove };
