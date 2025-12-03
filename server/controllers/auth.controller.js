@@ -103,10 +103,20 @@ const hasAuthorization = (req, res, next) => {
   next();
 };
 
+const requireAdmin = (req, res, next) => {
+  if (!req.auth || req.auth.role !== "admin") {
+    return res.status(403).json({
+      error: "Admin access required",
+    });
+  }
+  next();
+};
+
 export default {
   signup,
   signin,
   signout,
   requireSignin,
   hasAuthorization,
+  requireAdmin,
 };

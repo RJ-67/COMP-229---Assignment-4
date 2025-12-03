@@ -8,7 +8,11 @@ const router = express.Router();
 router.route("/api/users")
   .post(userCtrl.create)
   .get(userCtrl.list)
-  .delete(userCtrl.removeMany);
+  .delete(
+    authCtrl.requireSignin,
+    authCtrl.requireAdmin,
+    userCtrl.removeMany
+  );
 
 // LOAD user when :userId present
 router.param("userId", userCtrl.userByID);
@@ -17,6 +21,10 @@ router.param("userId", userCtrl.userByID);
 router.route("/api/users/:userId")
   .get(authCtrl.requireSignin, userCtrl.read)
   .put(authCtrl.requireSignin, authCtrl.hasAuthorization, userCtrl.update)
-  .delete(authCtrl.requireSignin, authCtrl.hasAuthorization, userCtrl.remove);
+  .delete(
+    authCtrl.requireSignin,
+    authCtrl.requireAdmin,
+    userCtrl.remove
+  );
 
 export default router;
