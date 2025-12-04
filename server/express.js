@@ -13,21 +13,21 @@ import contactRoutes from "./routes/contact.routes.js";
 
 const app = express();
 
-// app.use(cors({
-//   origin: "http://localhost:5173",
-//   credentials: true,
-// }));
+app.use(cors({
+  origin: "http://localhost:5173",
+  credentials: true,
+}));
 
 // RENDER DEPLOYMENT
-app.use(cors({
-  origin: [
-    "http://localhost:5173",                
-    "https://comp-229-assignment-4-frontend.onrender.com"    
-  ],
-  credentials: true,
-  methods: ["GET", "POST", "PUT", "DELETE"],
-  allowedHeaders: ["Content-Type", "Authorization"],
-}));
+// app.use(cors({
+//   origin: [
+//     "http://localhost:5173",                
+//     "https://comp-229-assignment-4-frontend.onrender.com"    
+//   ],
+//   credentials: true,
+//   methods: ["GET", "POST", "PUT", "DELETE"],
+//   allowedHeaders: ["Content-Type", "Authorization"],
+// }));
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
